@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>FX weather App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="images/fav-icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <style>
+        body {
+            background: url(images/clear-background.jpg) no-repeat;
+            background-size: cover;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="containerr">
+        <div class="sun">
+            <div class="box">
+                <form class="col-md-6 m-auto py-5 pb-0">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control inputbox" placeholder="Enter a location for Weather ...">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" id="search-btn">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="weather-status text-white text-center">
+                    <img src="images/sun.png" width="100px" alt="" id="condition-image">
+                    <h1 class="city-name">Sirajganj</h1> 
+                    <h1 class="Deser-Nam">BD</h1> 
+                    <h3><span id="Temperature">20°C</span>&deg;C</h3>
+                    <h1 class="lead">Clear</h1>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="e-info">humidity: <span id="hunidity">55</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="e-info">pressure: <span id="pressure">1014</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="e-info">max temp: <span id="max">20</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="e-info">min temp: <span id="min">20</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputBox = document.querySelector(".inputbox");
+        const box = document.getElementsByClassName("box")[0];
+        setTimeout(() => {
+            box.style.backgroundColor = "rgba(0.5, 0.5, 0.5, 0.6)";
+        }, 2000);
+        function callTheApi (city){
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=320aef20fd53185a9176c5e5859e57eb`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                console.log(data.name);
+                document.querySelector(".city-name").innerHTML = data.sys.country;
+                document.querySelector(".Deser-Nam").innerHTML = data.name;
+                document.getElementById("Temperature").innerHTML = Math.round(data.main.temp - 273.15);
+                document.querySelector(".lead").innerHTML = data.weather[0].main;
+                document.getElementById("hunidity").innerHTML = data.main.humidity;   
+                document.getElementById("pressure").innerHTML = data.main.pressure;
+                document.getElementById("max").innerHTML =  Math.round(data.main.temp_max - 273.15);
+                document.getElementById("min").innerHTML = Math.round(data.main.temp_min - 273.15);
+                const lead = data.weather[0].main;
+                const imageSource = document.getElementById("condition-image");
+                const background = document.querySelector("body").style;
+                if(lead === "Mist"){
+                    imageSource.src = "images/fogy.png";
+                    background.backgroundImage = "url(images/fog-background.jpg)"
+                }
+                else if (lead === "Clear"){
+                    imageSource.src = "images/sun.png";
+                    background.backgroundImage = "url(images/clear-background.jpg)"
+                }
+                else if (lead === "Rain"){
+                    imageSource.src = "images/rainy.png"
+                    background.backgroundImage = "url(images/rain-background.jpg)";
+                }
+                else if (lead === "Snow"){
+                    imageSource.src = "images/snow.png";
+                    background.backgroundImage = "url(images/snow-background.jpg)"
+                }
+                else if (lead === "Clouds"){
+                    imageSource.src = "images/cloud.png";
+                    background.backgroundImage = "url(images/pexels-magda-ehlers-2114014.jpg)"
+                }
+            });
+        };
+        
+        document.getElementById("search-btn").addEventListener("click", () => {
+            callTheApi(inputBox.value);
+            
+        })
+    </script>
+</body>
+</html>
